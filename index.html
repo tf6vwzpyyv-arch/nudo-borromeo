@@ -1,389 +1,926 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Nudo Borromeo Interactivo - Neuropsicolocos</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        #info {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.75);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            backdrop-filter: blur(5px);
-            pointer-events: none;
-            z-index: 10;
-            font-size: 14px;
-            max-width: 280px;
-            border-left: 4px solid #ff3366;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        #info h1 {
-            margin: 0 0 5px;
-            font-size: 18px;
-        }
-        #info p {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-        #status {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            color: #ffcc00;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-family: monospace;
-            font-size: 14px;
-            pointer-events: none;
-            z-index: 10;
-            font-weight: bold;
-        }
-        #reset-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: #ff3366;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 20;
-            font-family: inherit;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            transition: transform 0.1s ease;
-        }
-        #reset-btn:hover {
-            transform: scale(1.02);
-            background: #ff5c85;
-        }
-        #reset-btn:active {
-            transform: scale(0.98);
-        }
-        .note {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.5);
-            color: #ccc;
-            font-size: 10px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            pointer-events: none;
-            white-space: nowrap;
-            font-family: monospace;
-        }
-        @media (max-width: 600px) {
-            #info { font-size: 10px; max-width: 220px; top: 10px; left: 10px; }
-            #info h1 { font-size: 14px; }
-            #reset-btn { padding: 6px 14px; font-size: 12px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Nudo Borromeo Interactivo 2.1 - NeuroPsicoLocos</title>
+  <style>
+    :root {
+      --bg: #050510;
+      --panel: rgba(8, 10, 24, 0.82);
+      --panel-strong: rgba(8, 10, 24, 0.94);
+      --text: #f2f5ff;
+      --muted: #aab3d6;
+      --real: #ff6666;
+      --simbolico: #66ccff;
+      --imaginario: #66ff99;
+      --sinthome: #ffd84d;
+      --accent: #ff3366;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #ui {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    #panel {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: min(360px, calc(100vw - 36px));
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-left: 5px solid var(--accent);
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+      pointer-events: auto;
+      overflow: hidden;
+    }
+
+    #panelHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px 10px;
+    }
+
+    #panel h1 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    #panel small {
+      display: block;
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    #collapse {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
+      font-weight: 900;
+      pointer-events: auto;
+    }
+
+    #panelBody {
+      padding: 0 16px 16px;
+      transition: max-height 0.25s ease, opacity 0.25s ease;
+      max-height: 620px;
+      opacity: 1;
+    }
+
+    #panel.collapsed #panelBody {
+      max-height: 0;
+      opacity: 0;
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+
+    .legend {
+      display: grid;
+      gap: 7px;
+      margin: 8px 0 12px;
+    }
+
+    .legend button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 9px 10px;
+      cursor: pointer;
+      font: inherit;
+      pointer-events: auto;
+      text-align: left;
+    }
+
+    .legend button:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #06101d;
+      font-weight: 800;
+    }
+
+    .real { color: var(--real); }
+    .simbolico { color: var(--simbolico); }
+    .imaginario { color: var(--imaginario); }
+    .sinthome { color: var(--sinthome); }
+
+    .pill.real-bg { background: var(--real); }
+    .pill.simbolico-bg { background: var(--simbolico); }
+    .pill.imaginario-bg { background: var(--imaginario); }
+    .pill.sinthome-bg { background: var(--sinthome); }
+
+    #explanation {
+      background: rgba(0,0,0,0.28);
+      border-radius: 14px;
+      padding: 12px;
+      color: var(--text);
+      line-height: 1.35;
+      font-size: 13.5px;
+      min-height: 112px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    #explanation strong {
+      color: white;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .controls button, #fullReset {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 10px;
+      cursor: pointer;
+      font-weight: 800;
+      color: white;
+      background: rgba(255,255,255,0.11);
+      border: 1px solid rgba(255,255,255,0.12);
+      pointer-events: auto;
+    }
+
+    .controls button:hover, #fullReset:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    #studentBtn {
+      background: linear-gradient(135deg, #654bff, #ff3366);
+      border: none;
+    }
+
+    #sinthomeBtn.active {
+      background: rgba(255,216,77,0.22);
+      border-color: rgba(255,216,77,0.55);
+      color: #ffe98b;
+    }
+
+    #fullReset {
+      width: 100%;
+      margin-top: 8px;
+      background: rgba(255,51,102,0.22);
+      border-color: rgba(255,51,102,0.5);
+    }
+
+    #status {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      max-width: min(520px, calc(100vw - 36px));
+      background: rgba(0,0,0,0.72);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      padding: 10px 16px;
+      color: #ffcc00;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 800;
+      pointer-events: none;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    }
+
+    #help {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      max-width: min(360px, calc(100vw - 36px));
+      background: rgba(0,0,0,0.48);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #d8ddff;
+      padding: 9px 13px;
+      border-radius: 16px;
+      font-size: 12px;
+      line-height: 1.35;
+      pointer-events: none;
+    }
+
+    #tourCard {
+      position: absolute;
+      top: 50%;
+      right: 24px;
+      transform: translateY(-50%);
+      width: min(340px, calc(100vw - 48px));
+      background: var(--panel-strong);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-top: 4px solid #8b7cff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.52);
+      pointer-events: auto;
+      display: none;
+    }
+
+    #tourCard h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    #tourCard p {
+      color: var(--muted);
+      margin: 0 0 14px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    #tourCard button {
+      border: 0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 800;
+      color: white;
+      background: #654bff;
+      pointer-events: auto;
+      margin-right: 6px;
+    }
+
+    #tourCard button.secondary {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .label {
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      text-shadow: 0 2px 8px black;
+      background: rgba(0,0,0,0.52);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      white-space: nowrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    @media (max-width: 720px) {
+      #panel {
+        top: 10px;
+        left: 10px;
+        width: calc(100vw - 20px);
+      }
+
+      #panel h1 {
+        font-size: 16px;
+      }
+
+      #status {
+        left: 10px;
+        right: 10px;
+        bottom: 72px;
+        border-radius: 16px;
+        font-size: 11px;
+      }
+
+      #help {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        font-size: 11px;
+      }
+
+      #tourCard {
+        top: auto;
+        right: 10px;
+        left: 10px;
+        bottom: 120px;
+        transform: none;
+        width: auto;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div id="info">
-        <h1>🌀 Nudo Borromeo</h1>
-        <p><span style="color:#ff6666">🔴 Real</span> | <span style="color:#66ccff">🔵 Simbólico</span> | <span style="color:#66ff99">🟢 Imaginario</span><br>
-        Haz clic en cualquier anilla para "cortarla". Si una falta, las otras dos se sueltan.</p>
+  <div id="ui">
+    <section id="panel">
+      <div id="panelHeader">
+        <div>
+          <h1>🌀 Nudo Borromeo 2.1</h1>
+          <small>Topología, Lacan y juego interactivo · NeuroPsicoLocos</small>
+        </div>
+        <button id="collapse" title="Minimizar panel">−</button>
+      </div>
+
+      <div id="panelBody">
+        <div class="legend">
+          <button data-topic="real"><span><b class="real">🔴 Real</b> — lo imposible de simbolizar</span><span class="pill real-bg">ver</span></button>
+          <button data-topic="simbolico"><span><b class="simbolico">🔵 Simbólico</b> — lenguaje, ley, estructura</span><span class="pill simbolico-bg">ver</span></button>
+          <button data-topic="imaginario"><span><b class="imaginario">🟢 Imaginario</b> — imagen, yo, espejo</span><span class="pill imaginario-bg">ver</span></button>
+          <button data-topic="sinthome"><span><b class="sinthome">🟡 Sinthome</b> — cuarto amarre posible</span><span class="pill sinthome-bg">extra</span></button>
+        </div>
+
+        <div id="explanation">
+          <strong>Idea central:</strong><br>
+          El nudo borromeo no une cada anilla por separado. Su fuerza está en la estructura completa:
+          si una anilla se corta, las otras dos dejan de sostenerse.
+        </div>
+
+        <div class="controls">
+          <button id="studentBtn">▶ Modo estudiante</button>
+          <button id="sinthomeBtn">🟡 Añadir Sinthome</button>
+        </div>
+        <button id="fullReset">⟳ Reiniciar estructura</button>
+      </div>
+    </section>
+
+    <div id="tourCard">
+      <h2 id="tourTitle">Modo estudiante</h2>
+      <p id="tourText">Vamos a recorrer el nudo paso a paso.</p>
+      <button id="tourNext">Siguiente</button>
+      <button id="tourClose" class="secondary">Cerrar</button>
     </div>
-    <div id="status">✅ Todas las anillas intactas</div>
-    <button id="reset-btn">⟳ Reiniciar nudo</button>
-    <div class="note">💡 Inspirado en Lacan | Neuropsicolocos.com</div>
 
-    <!-- Importar Three.js y complementos desde CDN -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
-            }
-        }
-    </script>
+    <div id="status">✅ Nudo intacto: Real, Simbólico e Imaginario se sostienen</div>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+    <div id="help">
+      ✂️ Clic sobre una anilla para cortarla · 🖱 Arrastra para rotar · 🔍 Rueda para acercar · 🟡 Activa Sinthome para comparar
+    </div>
+  </div>
 
-        // --- Configuración inicial ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x050510); // azul noche
-        scene.fog = new THREE.FogExp2(0x050510, 0.008);
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+      }
+    }
+  </script>
 
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(3, 2, 5);
-        camera.lookAt(0, 0, 0);
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = false; // para rendimiento
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(renderer.domElement);
+    const COLORS = {
+      real: 0xff6666,
+      simbolico: 0x66ccff,
+      imaginario: 0x66ff99,
+      sinthome: 0xffd84d
+    };
 
-        // Renderizador 2D para texto
-        const labelRenderer = new CSS2DRenderer();
-        labelRenderer.setSize(window.innerWidth, window.innerHeight);
-        labelRenderer.domElement.style.position = 'absolute';
-        labelRenderer.domElement.style.top = '0px';
-        labelRenderer.domElement.style.left = '0px';
-        labelRenderer.domElement.style.pointerEvents = 'none';
-        document.body.appendChild(labelRenderer.domElement);
+    const TEXTS = {
+      real: `<strong><span class="real">🔴 Real</span></strong><br>
+        No es simplemente “la realidad”. Es aquello que resiste ser capturado por el lenguaje:
+        trauma, cuerpo, goce, imposibilidad, resto no simbolizable.`,
+      simbolico: `<strong><span class="simbolico">🔵 Simbólico</span></strong><br>
+        Es el orden del lenguaje, la ley, los significantes y las estructuras que organizan la experiencia.
+        Sin Simbólico, el mundo pierde marco y articulación.`,
+      imaginario: `<strong><span class="imaginario">🟢 Imaginario</span></strong><br>
+        Es el dominio de la imagen, el yo, el espejo, la identidad y las formas de reconocimiento.
+        Da coherencia visual y narcisista al sujeto.`,
+      sinthome: `<strong><span class="sinthome">🟡 Sinthome</span></strong><br>
+        En el Lacan tardío, el Sinthome puede pensarse como un cuarto amarre.
+        No “cura” el nudo: lo estabiliza de una manera singular.`
+    };
 
-        // Controles para que el usuario pueda rotar/zoom
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.autoRotate = false;
-        controls.enableZoom = true;
-        controls.enablePan = true;
-        controls.zoomSpeed = 1.2;
-        controls.rotateSpeed = 1.0;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050510);
+    scene.fog = new THREE.FogExp2(0x050510, 0.007);
 
-        // --- Luces (sutil) ---
-        const ambientLight = new THREE.AmbientLight(0x404060);
-        scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.position.set(1, 2, 1);
-        scene.add(dirLight);
-        const backLight = new THREE.PointLight(0x4466cc, 0.3);
-        backLight.position.set(-1, 0, -2);
-        scene.add(backLight);
-        
-        // Estrellitas de fondo
-        const starGeometry = new THREE.BufferGeometry();
-        const starCount = 800;
-        const starPositions = new Float32Array(starCount * 3);
-        for (let i = 0; i < starCount; i++) {
-            starPositions[i*3] = (Math.random() - 0.5) * 200;
-            starPositions[i*3+1] = (Math.random() - 0.5) * 100;
-            starPositions[i*3+2] = (Math.random() - 0.5) * 80 - 40;
-        }
-        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.6 });
-        const stars = new THREE.Points(starGeometry, starMaterial);
-        scene.add(stars);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(3.3, 2.25, 5.4);
 
-        // --- Funciones para crear curvas de anillas estilo nudo borromeo (aproximación) ---
-        // Cada anilla es un tubo curvo paramétrico. No es un nudo perfecto topológicamente,
-        // pero visualmente se entrelazan y simulan la idea.
-        
-        function createRing(color, pointsArray, radiusTube = 0.045) {
-            // pointsArray: array de Vector3 que define la curva
-            const curve = new THREE.CatmullRomCurve3(pointsArray);
-            curve.curveType = 'centripetal';
-            curve.closed = true;
-            const tubeGeo = new THREE.TubeGeometry(curve, 120, radiusTube, 8, true);
-            const material = new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.15, roughness: 0.3, metalness: 0.7 });
-            const tube = new THREE.Mesh(tubeGeo, material);
-            tube.userData = { color: color, active: true };
-            return tube;
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    document.body.appendChild(renderer.domElement);
+
+    const labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0';
+    labelRenderer.domElement.style.left = '0';
+    labelRenderer.domElement.style.pointerEvents = 'none';
+    document.body.appendChild(labelRenderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.055;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.45;
+
+    scene.add(new THREE.AmbientLight(0x4b5278, 0.85));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+    keyLight.position.set(3, 5, 4);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.PointLight(0x4d78ff, 1.2, 10);
+    rimLight.position.set(-3, 1, -3);
+    scene.add(rimLight);
+
+    const magentaLight = new THREE.PointLight(0xff3366, 0.55, 8);
+    magentaLight.position.set(2, -1, 3);
+    scene.add(magentaLight);
+
+    // Halo central
+    const haloGeo = new THREE.SphereGeometry(1.65, 48, 48);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x3d4bff,
+      transparent: true,
+      opacity: 0.055,
+      side: THREE.BackSide
+    });
+    const halo = new THREE.Mesh(haloGeo, haloMat);
+    scene.add(halo);
+
+    // Partículas
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 1100;
+    const starPositions = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount; i++) {
+      starPositions[i * 3] = (Math.random() - 0.5) * 210;
+      starPositions[i * 3 + 1] = (Math.random() - 0.5) * 110;
+      starPositions[i * 3 + 2] = (Math.random() - 0.5) * 100 - 45;
+    }
+
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.075,
+      transparent: true,
+      opacity: 0.62
+    });
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    function createRing(topic, pointsArray, tubeRadius = 0.055) {
+      const curve = new THREE.CatmullRomCurve3(pointsArray);
+      curve.curveType = 'centripetal';
+      curve.closed = true;
+
+      const geometry = new THREE.TubeGeometry(curve, 170, tubeRadius, 14, true);
+      const material = new THREE.MeshStandardMaterial({
+        color: COLORS[topic],
+        emissive: COLORS[topic],
+        emissiveIntensity: 0.22,
+        roughness: 0.22,
+        metalness: 0.72,
+        transparent: true,
+        opacity: 1
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.userData = {
+        topic,
+        active: true,
+        cutProgress: 0,
+        basePosition: new THREE.Vector3(0,0,0),
+        targetPosition: new THREE.Vector3(0,0,0),
+        baseRotation: new THREE.Euler(0,0,0),
+        targetRotation: new THREE.Euler(0,0,0)
+      };
+
+      return mesh;
+    }
+
+    function pointsForRing(kind) {
+      const points = [];
+      for (let i = 0; i <= 100; i++) {
+        const t = i / 100;
+        const angle = t * Math.PI * 2;
+        const r = 1.24;
+        let x, y, z;
+
+        if (kind === 'real') {
+          x = Math.cos(angle) * r;
+          z = Math.sin(angle) * r;
+          y = Math.sin(angle * 2) * 0.48 + 0.18;
         }
-        
-        // Definir puntos para cada anilla (coordenadas aproximadas para entrelazado)
-        // Anilla Roja (Real)
-        const pointsRed = [];
-        for (let t = 0; t <= 1; t += 0.02) {
-            const angle = t * Math.PI * 2;
-            const r = 1.2;
-            const x = Math.cos(angle) * r;
-            const z = Math.sin(angle) * r;
-            const y = Math.sin(angle * 2) * 0.5;
-            pointsRed.push(new THREE.Vector3(x, y + 0.2, z));
+
+        if (kind === 'simbolico') {
+          x = Math.cos(angle + Math.PI / 3) * r;
+          z = Math.sin(angle + Math.PI / 3) * r;
+          y = Math.sin(angle * 2 + Math.PI) * 0.48 - 0.22;
         }
-        
-        // Anilla Azul (Simbólico) - rotada y desplazada
-        const pointsBlue = [];
-        for (let t = 0; t <= 1; t += 0.02) {
-            const angle = t * Math.PI * 2;
-            const r = 1.2;
-            const x = Math.cos(angle + Math.PI/3) * r;
-            const z = Math.sin(angle + Math.PI/3) * r;
-            const y = Math.sin(angle * 2 + Math.PI) * 0.5 - 0.2;
-            pointsBlue.push(new THREE.Vector3(x, y - 0.1, z));
+
+        if (kind === 'imaginario') {
+          x = Math.cos(angle - Math.PI / 3) * r;
+          z = Math.sin(angle - Math.PI / 3) * r;
+          y = Math.cos(angle * 2) * 0.48 + 0.04;
         }
-        
-        // Anilla Verde (Imaginario)
-        const pointsGreen = [];
-        for (let t = 0; t <= 1; t += 0.02) {
-            const angle = t * Math.PI * 2;
-            const r = 1.2;
-            const x = Math.cos(angle - Math.PI/3) * r;
-            const z = Math.sin(angle - Math.PI/3) * r;
-            const y = Math.cos(angle * 2) * 0.5;
-            pointsGreen.push(new THREE.Vector3(x, y + 0.1, z));
+
+        if (kind === 'sinthome') {
+          x = Math.cos(angle) * 1.0;
+          y = Math.sin(angle) * 1.0;
+          z = Math.sin(angle * 2) * 0.44;
         }
-        
-        const ringRed = createRing(0xff6666, pointsRed, 0.05);
-        const ringBlue = createRing(0x66ccff, pointsBlue, 0.05);
-        const ringGreen = createRing(0x66ff99, pointsGreen, 0.05);
-        
-        scene.add(ringRed);
-        scene.add(ringBlue);
-        scene.add(ringGreen);
-        
-        // Añadir pequeñas esferas brillantes en cada anilla para efecto visual
-        function addGlowPoints(ring, color, interval = 0.15) {
-            const positions = [];
-            // No podemos extraer fácilmente puntos del tube, así que creamos esferas orbitando aproximadas
-            // Mejor: añadimos puntos alrededor de la curva de manera decorativa
-            const curvePoints = ring.geometry.attributes.position.array;
-            const step = Math.floor(curvePoints.length / 40);
-            for (let i = 0; i < curvePoints.length; i += step) {
-                const x = curvePoints[i];
-                const y = curvePoints[i+1];
-                const z = curvePoints[i+2];
-                const sphereGeo = new THREE.SphereGeometry(0.03, 6, 6);
-                const sphereMat = new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.5 });
-                const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-                sphere.position.set(x, y, z);
-                scene.add(sphere);
-            }
+
+        points.push(new THREE.Vector3(x, y, z));
+      }
+      return points;
+    }
+
+    const ringRed = createRing('real', pointsForRing('real'));
+    const ringBlue = createRing('simbolico', pointsForRing('simbolico'));
+    const ringGreen = createRing('imaginario', pointsForRing('imaginario'));
+    const ringSinthome = createRing('sinthome', pointsForRing('sinthome'), 0.045);
+
+    ringSinthome.rotation.set(Math.PI / 2.2, 0.35, 0.1);
+    ringSinthome.visible = false;
+    ringSinthome.material.opacity = 0;
+
+    scene.add(ringRed, ringBlue, ringGreen, ringSinthome);
+
+    const rings = [ringRed, ringBlue, ringGreen, ringSinthome];
+
+    function makeLabel(text, color, position) {
+      const div = document.createElement('div');
+      div.className = 'label';
+      div.textContent = text;
+      div.style.borderLeft = `4px solid ${color}`;
+      const label = new CSS2DObject(div);
+      label.position.copy(position);
+      return label;
+    }
+
+    const labels = {
+      real: makeLabel('🔴 REAL', '#ff6666', new THREE.Vector3(1.7, 0.85, 0.25)),
+      simbolico: makeLabel('🔵 SIMBÓLICO', '#66ccff', new THREE.Vector3(-1.35, 1.05, 1.24)),
+      imaginario: makeLabel('🟢 IMAGINARIO', '#66ff99', new THREE.Vector3(0.55, -1.22, 1.42)),
+      sinthome: makeLabel('🟡 SINTHOME', '#ffd84d', new THREE.Vector3(-1.4, -0.9, -0.9))
+    };
+
+    scene.add(labels.real, labels.simbolico, labels.imaginario);
+    labels.sinthome.visible = false;
+    scene.add(labels.sinthome);
+
+    const statusDiv = document.getElementById('status');
+    const explanationDiv = document.getElementById('explanation');
+    const sinthomeBtn = document.getElementById('sinthomeBtn');
+
+    let sinthomeMode = false;
+    let brokenTopic = null;
+    let studentMode = false;
+    let tourStep = 0;
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function setExplanation(topic) {
+      explanationDiv.innerHTML = TEXTS[topic];
+      focusTopic(topic);
+    }
+
+    function focusTopic(topic) {
+      const ring = rings.find(r => r.userData.topic === topic);
+      if (!ring || !ring.visible) return;
+      ring.material.emissiveIntensity = 0.75;
+      setTimeout(() => {
+        if (ring.material) ring.material.emissiveIntensity = topic === 'sinthome' ? 0.32 : 0.22;
+      }, 750);
+    }
+
+    function resetTransforms() {
+      ringRed.position.set(0,0,0);
+      ringBlue.position.set(0,0,0);
+      ringGreen.position.set(0,0,0);
+      ringRed.rotation.set(0,0,0);
+      ringBlue.rotation.set(0,0,0);
+      ringGreen.rotation.set(0,0,0);
+
+      ringSinthome.position.set(0,0,0);
+      ringSinthome.rotation.set(Math.PI / 2.2, 0.35, 0.1);
+    }
+
+    function restoreAll() {
+      brokenTopic = null;
+
+      rings.forEach(r => {
+        r.userData.active = true;
+        r.userData.cutProgress = 0;
+        r.material.opacity = r.userData.topic === 'sinthome' && !sinthomeMode ? 0 : 1;
+        r.visible = r.userData.topic !== 'sinthome' || sinthomeMode;
+        r.scale.set(1,1,1);
+      });
+
+      labels.real.visible = true;
+      labels.simbolico.visible = true;
+      labels.imaginario.visible = true;
+      labels.sinthome.visible = sinthomeMode;
+
+      resetTransforms();
+      updateStatus();
+    }
+
+    function updateStatus() {
+      if (!brokenTopic) {
+        statusDiv.innerHTML = sinthomeMode
+          ? '✅ RSI + Sinthome: estructura estabilizada con cuarto amarre'
+          : '✅ Nudo intacto: Real, Simbólico e Imaginario se sostienen';
+        statusDiv.style.color = '#ffcc00';
+        return;
+      }
+
+      const names = {
+        real: 'REAL',
+        simbolico: 'SIMBÓLICO',
+        imaginario: 'IMAGINARIO',
+        sinthome: 'SINTHOME'
+      };
+
+      const color = {
+        real: '#ff8888',
+        simbolico: '#88ccff',
+        imaginario: '#88ffaa',
+        sinthome: '#ffe98b'
+      };
+
+      if (sinthomeMode && brokenTopic !== 'sinthome') {
+        statusDiv.innerHTML = `✂️ ${names[brokenTopic]} cortado → el Sinthome conserva un amarre posible`;
+      } else if (brokenTopic === 'sinthome') {
+        statusDiv.innerHTML = '✂️ Sinthome retirado → vuelve la fragilidad del RSI clásico';
+      } else {
+        statusDiv.innerHTML = `❌ ${names[brokenTopic]} cortado → las otras anillas se separan`;
+      }
+
+      statusDiv.style.color = color[brokenTopic];
+    }
+
+    function cutRing(topic) {
+      if (brokenTopic) return;
+
+      const ring = rings.find(r => r.userData.topic === topic);
+      if (!ring || !ring.visible || !ring.userData.active) return;
+
+      brokenTopic = topic;
+      ring.userData.active = false;
+      ring.userData.cutProgress = 0.001;
+
+      const nameMap = {
+        real: 'Real',
+        simbolico: 'Simbólico',
+        imaginario: 'Imaginario',
+        sinthome: 'Sinthome'
+      };
+
+      explanationDiv.innerHTML = `<strong>✂️ Corte del registro ${nameMap[topic]}</strong><br>
+        Observa cómo cambia la estructura. En el RSI clásico, una anilla retirada deshace el soporte.
+        Con Sinthome activado, aparece una forma suplementaria de estabilización.`;
+
+      if (topic === 'real') labels.real.visible = false;
+      if (topic === 'simbolico') labels.simbolico.visible = false;
+      if (topic === 'imaginario') labels.imaginario.visible = false;
+      if (topic === 'sinthome') labels.sinthome.visible = false;
+
+      if (sinthomeMode && topic !== 'sinthome') {
+        ringSinthome.material.emissiveIntensity = 0.9;
+        ringSinthome.scale.set(1.08,1.08,1.08);
+
+        if (topic === 'real') {
+          ringBlue.position.set(0.16, 0.08, 0.08);
+          ringGreen.position.set(-0.12, -0.05, 0.10);
+        } else if (topic === 'simbolico') {
+          ringRed.position.set(0.12, -0.05, 0.10);
+          ringGreen.position.set(-0.14, 0.08, 0.08);
+        } else if (topic === 'imaginario') {
+          ringRed.position.set(-0.12, 0.09, 0.08);
+          ringBlue.position.set(0.14, -0.04, 0.10);
         }
-        // Opcional: descomentar si se quiere más brillo, pero puede saturar
-        // addGlowPoints(ringRed, 0xff6666);
-        // addGlowPoints(ringBlue, 0x66ccff);
-        // addGlowPoints(ringGreen, 0x66ff99);
-        
-        // Etiquetas CSS2D
-        function makeLabel(text, color, position) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            div.style.color = color;
-            div.style.fontSize = '20px';
-            div.style.fontWeight = 'bold';
-            div.style.textShadow = '1px 1px 0px black';
-            div.style.background = 'rgba(0,0,0,0.5)';
-            div.style.padding = '2px 8px';
-            div.style.borderRadius = '20px';
-            div.style.borderLeft = `3px solid ${color}`;
-            div.style.fontFamily = 'monospace';
-            const label = new CSS2DObject(div);
-            label.position.copy(position);
-            return label;
+      } else {
+        if (topic !== 'real') {
+          ringRed.position.set(-0.55, 0.32, 0.45);
+          ringRed.rotation.z += 0.45;
         }
-        
-        const labelRed = makeLabel('🔴 REAL', '#ff8888', new THREE.Vector3(1.6, 0.8, 0.2));
-        const labelBlue = makeLabel('🔵 SIMBÓLICO', '#88aaff', new THREE.Vector3(-1.2, 1.0, 1.2));
-        const labelGreen = makeLabel('🟢 IMAGINARIO', '#88ffaa', new THREE.Vector3(0.5, -1.2, 1.4));
-        scene.add(labelRed);
-        scene.add(labelBlue);
-        scene.add(labelGreen);
-        
-        // Estado de cada anilla
-        let redActive = true, blueActive = true, greenActive = true;
-        const statusDiv = document.getElementById('status');
-        
-        // Función para actualizar visibilidad y el "corte"
-        function updateCut() {
-            ringRed.visible = redActive;
-            ringBlue.visible = blueActive;
-            ringGreen.visible = greenActive;
-            
-            // Si alguna falta, las otras dos se "sueltan": cambiamos su posición ligeramente y rotación
-            // Para simular que se desmorona el nudo, las movemos un poco
-            if (!redActive) {
-                ringBlue.position.set(0.4, 0.2, 0.3);
-                ringGreen.position.set(-0.3, -0.1, 0.4);
-                statusDiv.innerHTML = '❌ Anilla REAL cortada → Simbólico e Imaginario se separan';
-                statusDiv.style.color = '#ff8888';
-            } else if (!blueActive) {
-                ringRed.position.set(0.3, -0.2, 0.4);
-                ringGreen.position.set(-0.4, 0.3, 0.2);
-                statusDiv.innerHTML = '❌ Anilla SIMBÓLICO cortada → Real e Imaginario se separan';
-                statusDiv.style.color = '#88aaff';
-            } else if (!greenActive) {
-                ringRed.position.set(-0.3, 0.3, 0.4);
-                ringBlue.position.set(0.4, -0.1, 0.3);
-                statusDiv.innerHTML = '❌ Anilla IMAGINARIO cortada → Real y Simbólico se separan';
-                statusDiv.style.color = '#88ffaa';
-            } else {
-                // Todo activo: restaurar posiciones originales
-                ringRed.position.set(0, 0, 0);
-                ringBlue.position.set(0, 0, 0);
-                ringGreen.position.set(0, 0, 0);
-                statusDiv.innerHTML = '✅ Nudo borromeo intacto: las tres anillas se sostienen';
-                statusDiv.style.color = '#ffcc00';
-            }
+        if (topic !== 'simbolico') {
+          ringBlue.position.set(0.62, -0.18, 0.38);
+          ringBlue.rotation.x += 0.55;
         }
-        
-        // Detección de clic mediante Raycaster
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        
-        function onClickCanvas(event) {
-            if (!redActive && !blueActive && !greenActive) return; // ya todo cortado, reset necesario
-            
-            const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-            
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects([ringRed, ringBlue, ringGreen]);
-            
-            if (intersects.length > 0) {
-                const clicked = intersects[0].object;
-                if (clicked === ringRed && redActive) {
-                    redActive = false;
-                } else if (clicked === ringBlue && blueActive) {
-                    blueActive = false;
-                } else if (clicked === ringGreen && greenActive) {
-                    greenActive = false;
-                } else {
-                    return;
-                }
-                updateCut();
-            }
+        if (topic !== 'imaginario') {
+          ringGreen.position.set(-0.25, -0.42, 0.56);
+          ringGreen.rotation.y += 0.55;
         }
-        
-        window.addEventListener('click', onClickCanvas, false);
-        
-        // Botón reset
-        document.getElementById('reset-btn').addEventListener('click', () => {
-            redActive = true;
-            blueActive = true;
-            greenActive = true;
-            ringRed.position.set(0, 0, 0);
-            ringBlue.position.set(0, 0, 0);
-            ringGreen.position.set(0, 0, 0);
-            updateCut();
-        });
-        
-        // Animación simple de rotación suave automática si el usuario no interactúa? Opcional: desactivado por OrbitControls ya permite rotar manual.
-        // Hacemos que las estrellitas roten muy lento
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update(); // actualiza si el usuario mueve cámara
-            stars.rotation.y += 0.0005;
-            stars.rotation.x += 0.0003;
-            renderer.render(scene, camera);
-            labelRenderer.render(scene, camera);
+        if (topic !== 'sinthome' && ringSinthome.visible) {
+          ringSinthome.position.set(0.18, 0.18, -0.1);
         }
-        animate();
-        
-        // Ajuste al redimensionar ventana
-        window.addEventListener('resize', onWindowResize, false);
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      updateStatus();
+    }
+
+    function onClickCanvas(event) {
+      const target = event.target;
+      if (target.closest && target.closest('#ui')) return;
+
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const candidates = rings.filter(r => r.visible && r.userData.active);
+      const intersects = raycaster.intersectObjects(candidates);
+
+      if (intersects.length > 0) {
+        cutRing(intersects[0].object.userData.topic);
+      }
+    }
+
+    window.addEventListener('click', onClickCanvas, false);
+
+    document.querySelectorAll('.legend button').forEach(btn => {
+      btn.addEventListener('click', () => setExplanation(btn.dataset.topic));
+    });
+
+    document.getElementById('fullReset').addEventListener('click', restoreAll);
+
+    document.getElementById('collapse').addEventListener('click', () => {
+      const panel = document.getElementById('panel');
+      panel.classList.toggle('collapsed');
+      document.getElementById('collapse').textContent = panel.classList.contains('collapsed') ? '+' : '−';
+    });
+
+    sinthomeBtn.addEventListener('click', () => {
+      sinthomeMode = !sinthomeMode;
+      sinthomeBtn.classList.toggle('active', sinthomeMode);
+      sinthomeBtn.textContent = sinthomeMode ? '🟡 Quitar Sinthome' : '🟡 Añadir Sinthome';
+
+      ringSinthome.visible = sinthomeMode;
+      labels.sinthome.visible = sinthomeMode;
+
+      if (sinthomeMode) {
+        ringSinthome.material.opacity = 1;
+        setExplanation('sinthome');
+      } else {
+        ringSinthome.material.opacity = 0;
+        ringSinthome.visible = false;
+        labels.sinthome.visible = false;
+      }
+
+      restoreAll();
+    });
+
+    const tourCard = document.getElementById('tourCard');
+    const tourTitle = document.getElementById('tourTitle');
+    const tourText = document.getElementById('tourText');
+    const tourNext = document.getElementById('tourNext');
+    const tourClose = document.getElementById('tourClose');
+
+    const tour = [
+      {
+        title: '1/5 — El nudo completo',
+        text: 'Este modelo representa una lectura didáctica del nudo borromeo: Real, Simbólico e Imaginario no se sostienen de forma aislada, sino por la estructura completa.',
+        camera: [3.3, 2.25, 5.4],
+        topic: null
+      },
+      {
+        title: '2/5 — Registro Imaginario',
+        text: 'El Imaginario se relaciona con la imagen, el yo, el espejo y la forma en que el sujeto se reconoce.',
+        camera: [1.6, -1.5, 3.2],
+        topic: 'imaginario'
+      },
+      {
+        title: '3/5 — Registro Simbólico',
+        text: 'El Simbólico introduce lenguaje, ley y significantes. Es una red que ordena la experiencia.',
+        camera: [-2.0, 1.7, 3.2],
+        topic: 'simbolico'
+      },
+      {
+        title: '4/5 — Registro Real',
+        text: 'El Real no es la realidad cotidiana: es aquello que no puede integrarse plenamente al lenguaje.',
+        camera: [2.3, 1.2, 3.2],
+        topic: 'real'
+      },
+      {
+        title: '5/5 — Ahora corta una anilla',
+        text: 'Haz clic sobre cualquier anilla. En el RSI clásico, al cortar una, la estructura se deshace. Luego prueba activando el Sinthome.',
+        camera: [3.3, 2.25, 5.4],
+        topic: null
+      }
+    ];
+
+    function showTourStep() {
+      const step = tour[tourStep];
+      tourTitle.textContent = step.title;
+      tourText.textContent = step.text;
+
+      const [x, y, z] = step.camera;
+      camera.position.set(x, y, z);
+      camera.lookAt(0,0,0);
+      controls.target.set(0,0,0);
+      controls.update();
+
+      if (step.topic) setExplanation(step.topic);
+
+      tourNext.textContent = tourStep === tour.length - 1 ? 'Terminar' : 'Siguiente';
+    }
+
+    function startTour() {
+      restoreAll();
+      studentMode = true;
+      tourStep = 0;
+      tourCard.style.display = 'block';
+      controls.autoRotate = false;
+      showTourStep();
+    }
+
+    document.getElementById('studentBtn').addEventListener('click', startTour);
+
+    tourNext.addEventListener('click', () => {
+      if (tourStep < tour.length - 1) {
+        tourStep++;
+        showTourStep();
+      } else {
+        tourCard.style.display = 'none';
+        studentMode = false;
+        controls.autoRotate = true;
+      }
+    });
+
+    tourClose.addEventListener('click', () => {
+      tourCard.style.display = 'none';
+      studentMode = false;
+      controls.autoRotate = true;
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      stars.rotation.y += 0.00035;
+      stars.rotation.x += 0.00022;
+      halo.rotation.y += 0.001;
+
+      rings.forEach(r => {
+        if (r.userData.cutProgress > 0 && r.userData.cutProgress < 1) {
+          r.userData.cutProgress += 0.035;
+          const p = r.userData.cutProgress;
+          r.material.opacity = Math.max(0, 1 - p);
+          r.scale.setScalar(1 + p * 0.18);
+          r.rotation.z += 0.025;
+          if (p >= 1) {
+            r.visible = false;
+            r.material.opacity = 0;
+          }
         }
-        
-        // Pequeño mensaje en consola
-        console.log('🌀 Nudo Borromeo interactivo | Haz clic en cualquier anilla para cortarla');
-    </script>
+      });
+
+      if (sinthomeMode && !brokenTopic) {
+        ringSinthome.rotation.z += 0.002;
+      }
+
+      if (sinthomeMode && brokenTopic && brokenTopic !== 'sinthome') {
+        ringSinthome.rotation.z += 0.004;
+        ringSinthome.material.emissiveIntensity = 0.55 + Math.sin(Date.now() * 0.006) * 0.18;
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+      labelRenderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    console.log('🌀 NeuroPsicoLocos · Nudo Borromeo Interactivo 2.1 cargado');
+  </script>
 </body>
 </html>
