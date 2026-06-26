@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Nudo Borromeo Interactivo 2.1 - NeuroPsicoLocos </title>
+  <title>Nudo Borromeo Interactivo 2.2 - NeuroPsicoLocos</title>
   <style>
     :root {
       --bg: #050510;
@@ -291,6 +291,141 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
+    /* ── Guía de conceptos ── */
+    #guideToggle {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 20;
+      pointer-events: auto;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 14px;
+      padding: 10px 16px;
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    #guideToggle:hover { background: rgba(255,255,255,0.12); }
+
+    #guidePanel {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: min(380px, calc(100vw - 36px));
+      max-height: calc(100vh - 36px);
+      background: var(--panel-strong);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-top: 4px solid #8b7cff;
+      border-radius: 18px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+      pointer-events: auto;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 30;
+    }
+
+    #guidePanel.open { display: flex; }
+
+    #guidePanelHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    #guidePanelHeader h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+    #guidePanelHeader small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 3px;
+    }
+    #guideClose {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    #guideScroll {
+      overflow-y: auto;
+      padding: 12px 14px 16px;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.18) transparent;
+    }
+
+    .guide-section {
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .guide-section-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 13px;
+      background: rgba(255,255,255,0.05);
+      border: none;
+      color: white;
+      font: inherit;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      text-align: left;
+      gap: 8px;
+    }
+    .guide-section-header:hover { background: rgba(255,255,255,0.10); }
+    .guide-section-header .guide-chevron {
+      font-size: 10px;
+      color: var(--muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .guide-section.open .guide-chevron { transform: rotate(180deg); }
+
+    .guide-section-body {
+      display: none;
+      padding: 0 13px 13px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .guide-section.open .guide-section-body { display: block; }
+    .guide-section-body p { margin: 9px 0 0; }
+    .guide-section-body p:first-child { margin-top: 10px; }
+    .guide-section-body strong { color: white; }
+    .guide-section-body em { color: #c8d0ff; font-style: normal; font-weight: 600; }
+
+    @media (max-width: 720px) {
+      #guideToggle { top: auto; bottom: 72px; right: 10px; }
+      #guidePanel { top: 10px; right: 10px; left: 10px; width: auto; max-height: calc(100vh - 20px); }
+    }
+
+    /* ── Responsive original ── */
     @media (max-width: 720px) {
       #panel {
         top: 10px;
@@ -334,7 +469,7 @@
     <section id="panel">
       <div id="panelHeader">
         <div>
-          <h1>🌀 Nudo Borromeo (H.R-P. 2026).</h1>
+          <h1>🌀 Nudo Borromeo 2.2</h1>
           <small>Topología, Lacan y juego interactivo · NeuroPsicoLocos</small>
         </div>
         <button id="collapse" title="Minimizar panel">−</button>
@@ -362,8 +497,136 @@
       </div>
     </section>
 
+    <!-- Botón para abrir guía -->
+    <button id="guideToggle" title="Guía de conceptos">📖 <span>Guía</span></button>
+
+    <!-- Panel lateral de guía conceptual -->
+    <div id="guidePanel">
+      <div id="guidePanelHeader">
+        <div>
+          <h2>📖 Guía conceptual</h2>
+          <small>Lacan para principiantes · Topología del sujeto</small>
+        </div>
+        <button id="guideClose" title="Cerrar">×</button>
+      </div>
+      <div id="guideScroll">
+
+        <div class="guide-section open">
+          <button class="guide-section-header">
+            <span>1 · Los tres registros: RSI</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>Toda experiencia humana se organiza mediante tres registros inseparables. Ninguno domina a los otros: el sujeto existe <strong>únicamente porque los tres permanecen enlazados</strong>.</p>
+            <p><em>🔴 Real</em> — No es la realidad física. Es aquello que no puede simbolizarse completamente. Siempre queda fuera de nuestras explicaciones: el trauma, el cuerpo, el goce. Por eso se representa como un agujero.</p>
+            <p><em>🔵 Simbólico</em> — El registro del lenguaje, las leyes, la cultura, los nombres y las normas. Cuando aprendemos un idioma no solo aprendemos palabras: aprendemos una forma completa de interpretar el mundo.</p>
+            <p><em>🟢 Imaginario</em> — El mundo de las imágenes: la identidad, el reconocimiento frente al espejo, la idea de «quién soy». No es falso, pero tampoco constituye toda la realidad.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>2 · ¿Por qué la topología?</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>La geometría estudia figuras exactas. La <strong>topología</strong> estudia propiedades que permanecen aunque una figura se estire o deforme.</p>
+            <p>Por ejemplo: una taza y una rosquilla poseen un solo agujero. Desde la topología son <em>equivalentes</em>.</p>
+            <p>Para Lacan esto fue una revolución: el inconsciente no debía entenderse como un órgano, sino como una <strong>estructura</strong>. La topología fue el lenguaje matemático que eligió para describirla.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>3 · La banda de Möbius</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>La banda de Möbius se obtiene girando media vuelta una tira de papel antes de unir sus extremos. Sorprendentemente <strong>posee una sola superficie</strong>: no existe una cara interna y otra externa.</p>
+            <p>Lacan la usa para mostrar que el sujeto tampoco posee una frontera absoluta entre «adentro» y «afuera». Gran parte de lo que creemos más íntimo — nuestros pensamientos, deseos — proviene del lenguaje, la cultura y el Otro.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>4 · El toro y el deseo</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>El toro no es otra cosa que una rosquilla. Lo importante no es la masa: <strong>lo importante es el agujero</strong>. Ese agujero nunca desaparece, aunque el toro crezca.</p>
+            <p>Lacan propone que el deseo funciona igual: nunca deseamos simplemente un objeto, sino <em>alrededor de una falta</em>. Cuando obtenemos lo que queríamos aparece de inmediato un nuevo deseo. No porque exista un defecto, sino porque el deseo está estructurado alrededor de un vacío imposible de llenar definitivamente.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>5 · El nudo borromeo</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>Está formado por tres anillas. Cada una sostiene a las otras dos. <strong>Si una se rompe, todas quedan libres</strong>: eso es lo que puedes explorar en esta visualización.</p>
+            <p>La idea central es que no «tenemos» un nudo. <em>Somos ese nudo</em>. No somos seres completamente cerrados ni coherentes: somos estructuras que intentan mantenerse unidas.</p>
+            <p>→ Haz clic sobre una anilla para ver qué sucede.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>6 · El Sinthome</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>¿Qué ocurre cuando el nudo amenaza con deshacerse? Lacan introduce un <strong>cuarto elemento</strong>: el Sinthome (grafía antigua de «síntoma»).</p>
+            <p>No es simplemente un trastorno. Es una <em>solución singular</em>: aquello que cada persona inventa para mantener unida su estructura. Para James Joyce fue la escritura. Para otros puede ser la música, el arte, un ritual cotidiano.</p>
+            <p>El Sinthome <strong>no elimina el conflicto</strong>: permite vivir con él.</p>
+            <p>→ Activa el Sinthome en el panel izquierdo y vuelve a cortar una anilla.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>7 · El objeto <em>a</em></span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>Quizá el concepto más famoso de Lacan. El <strong>objeto <em>a</em></strong> no es un objeto material ni una persona. No es aquello que deseamos: es <em>la causa del deseo</em>.</p>
+            <p>Creemos que deseamos un objeto. En realidad deseamos aquello que imaginamos que ese objeto contiene. Cuando finalmente lo obtenemos descubrimos que la falta continúa — y el deseo encuentra un nuevo destino. Por eso el deseo nunca termina.</p>
+            <p>Una buena metáfora: un planeta girando alrededor de una estrella. El planeta nunca cae sobre ella; simplemente continúa orbitando. Así funciona el deseo: su movimiento es precisamente lo que mantiene vivo al sujeto.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>8 · Puentes con la neurociencia</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>Lacan no hacía neurociencia, y la neurociencia no confirma literalmente el psicoanálisis. Sin embargo existen <strong>puentes conceptuales</strong> interesantes:</p>
+            <p>• Las redes cerebrales pueden estudiarse con herramientas <em>topológicas</em>.</p>
+            <p>• La <em>homología persistente</em> permite identificar cavidades o «agujeros» matemáticos en redes complejas.</p>
+            <p>• La <em>dopamina</em> responde con más fuerza a la anticipación y la expectativa que a la recompensa obtenida — lo cual resuena con la idea del deseo como órbita, no como llegada.</p>
+            <p>Estas observaciones no prueban las teorías de Lacan, pero muestran que estructura, conectividad y dinámica poseen un lenguaje matemático común.</p>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <button class="guide-section-header">
+            <span>✦ La pregunta de Lacan</span>
+            <span class="guide-chevron">▼</span>
+          </button>
+          <div class="guide-section-body">
+            <p>Lacan cambió una pregunta clásica. No preguntó: <em>«¿Qué hay dentro de la mente?»</em></p>
+            <p>Preguntó: <strong>«¿Cómo está enlazada la experiencia humana?»</strong></p>
+            <p>Desde esa perspectiva, el sujeto no es una colección de órganos psicológicos. Es una estructura donde el lenguaje, la imagen y aquello imposible de representar permanecen anudados.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <div id="tourCard">
       <h2 id="tourTitle">Modo estudiante</h2>
+      <div id="tourProgress" style="font-size:11px;color:var(--muted);margin-bottom:4px;"></div>
       <p id="tourText">Vamos a recorrer el nudo paso a paso.</p>
       <button id="tourNext">Siguiente</button>
       <button id="tourClose" class="secondary">Cerrar</button>
@@ -399,17 +662,23 @@
 
     const TEXTS = {
       real: `<strong><span class="real">🔴 Real</span></strong><br>
-        No es simplemente “la realidad”. Es aquello que resiste ser capturado por el lenguaje:
-        trauma, cuerpo, goce, imposibilidad, resto no simbolizable.`,
+        No es la realidad cotidiana. Para Lacan, el Real es aquello que <em>resiste ser capturado por el lenguaje</em>: trauma, cuerpo, goce, imposibilidad, resto no simbolizable.
+        Siempre aparece como un límite — un resto no simbolizable. Por eso se representa mediante un <strong>agujero</strong>.`,
       simbolico: `<strong><span class="simbolico">🔵 Simbólico</span></strong><br>
-        Es el orden del lenguaje, la ley, los significantes y las estructuras que organizan la experiencia.
+        El orden del lenguaje, la ley, los significantes y las estructuras que organizan la experiencia.
+        No solo palabras: también leyes, cultura, nombres, normas. Cuando aprendemos un idioma
+        aprendemos una <strong>forma completa de interpretar el mundo</strong>.
         Sin Simbólico, el mundo pierde marco y articulación.`,
       imaginario: `<strong><span class="imaginario">🟢 Imaginario</span></strong><br>
-        Es el dominio de la imagen, el yo, el espejo, la identidad y las formas de reconocimiento.
-        Da coherencia visual y narcisista al sujeto.`,
+        El dominio de la imagen, el yo, el espejo, la identidad y las formas de reconocimiento.
+        Aquí aparece la idea de "quién soy" y cómo creemos que nos perciben los demás.
+        No es falso — pero tampoco constituye <strong>toda la realidad</strong>.
+        Vivimos constantemente identificándonos con imágenes de nosotros mismos.`,
       sinthome: `<strong><span class="sinthome">🟡 Sinthome</span></strong><br>
-        En el Lacan tardío, el Sinthome puede pensarse como un cuarto amarre.
-        No “cura” el nudo: lo estabiliza de una manera singular.`
+        Grafía antigua de "síntoma", pero con un significado distinto: no es un trastorno,
+        sino una <strong>solución singular</strong>. Lo que cada persona inventa para
+        mantener unida su estructura. Para James Joyce fue la escritura.
+        El Sinthome no elimina el conflicto: <em>permite vivir con él</em>.`
     };
 
     const scene = new THREE.Scene();
@@ -801,32 +1070,44 @@
 
     const tour = [
       {
-        title: '1/5 — El nudo completo',
-        text: 'Este modelo representa una lectura didáctica del nudo borromeo: Real, Simbólico e Imaginario no se sostienen de forma aislada, sino por la estructura completa.',
+        title: '1/7 — El nudo completo',
+        text: 'Este modelo representa el nudo borromeo de Lacan: Real, Simbólico e Imaginario no se sostienen de forma aislada, sino por la estructura completa. No "tenemos" un nudo — somos ese nudo.',
         camera: [3.3, 2.25, 5.4],
         topic: null
       },
       {
-        title: '2/5 — Registro Imaginario',
-        text: 'El Imaginario se relaciona con la imagen, el yo, el espejo y la forma en que el sujeto se reconoce.',
+        title: '2/7 — Registro Imaginario',
+        text: 'El Imaginario es el mundo de las imágenes: la identidad, el reconocimiento frente al espejo y la idea de "quién soy". No es falso, pero tampoco constituye toda la realidad.',
         camera: [1.6, -1.5, 3.2],
         topic: 'imaginario'
       },
       {
-        title: '3/5 — Registro Simbólico',
-        text: 'El Simbólico introduce lenguaje, ley y significantes. Es una red que ordena la experiencia.',
+        title: '3/7 — Registro Simbólico',
+        text: 'El Simbólico introduce lenguaje, ley y significantes. No solo palabras: también cultura, nombres, normas. Cuando aprendemos un idioma aprendemos una forma completa de interpretar el mundo.',
         camera: [-2.0, 1.7, 3.2],
         topic: 'simbolico'
       },
       {
-        title: '4/5 — Registro Real',
-        text: 'El Real no es la realidad cotidiana: es aquello que no puede integrarse plenamente al lenguaje.',
+        title: '4/7 — Registro Real',
+        text: 'El Real no es la realidad cotidiana: es aquello que no puede simbolizarse completamente. Trauma, cuerpo, goce — siempre queda fuera de nuestras explicaciones. Por eso se representa como un agujero.',
         camera: [2.3, 1.2, 3.2],
         topic: 'real'
       },
       {
-        title: '5/5 — Ahora corta una anilla',
-        text: 'Haz clic sobre cualquier anilla. En el RSI clásico, al cortar una, la estructura se deshace. Luego prueba activando el Sinthome.',
+        title: '5/7 — Corta una anilla',
+        text: 'Haz clic sobre cualquier anilla del nudo. En el RSI clásico, al cortar una, la estructura entera se deshace: eso muestra que ningún registro sostiene solo a los otros.',
+        camera: [3.3, 2.25, 5.4],
+        topic: null
+      },
+      {
+        title: '6/7 — El Sinthome',
+        text: 'Primero pulsa "Reiniciar estructura". Luego activa el Sinthome en el panel izquierdo. Es el cuarto amarre de Lacan: una solución singular que cada persona inventa para mantener unida su estructura.',
+        camera: [3.3, 2.25, 5.4],
+        topic: 'sinthome'
+      },
+      {
+        title: '7/7 — El objeto a y el deseo',
+        text: 'El objeto a no es lo que deseamos: es la causa del deseo. Como un planeta que orbita una estrella sin caer sobre ella, el deseo nunca termina porque gira alrededor de una falta. Consulta la Guía conceptual para profundizar.',
         camera: [3.3, 2.25, 5.4],
         topic: null
       }
@@ -920,7 +1201,34 @@
       labelRenderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    console.log('🌀 NeuroPsicoLocos · Nudo Borromeo Interactivo 2.1 cargado');
+
+    // ── Guía conceptual ──────────────────────────────────────────
+    const guideToggle = document.getElementById('guideToggle');
+    const guidePanel = document.getElementById('guidePanel');
+    const guideClose = document.getElementById('guideClose');
+
+    guideToggle.addEventListener('click', () => {
+      guidePanel.classList.add('open');
+      guideToggle.style.display = 'none';
+    });
+
+    guideClose.addEventListener('click', () => {
+      guidePanel.classList.remove('open');
+      guideToggle.style.display = 'flex';
+    });
+
+    document.querySelectorAll('.guide-section-header').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const section = btn.closest('.guide-section');
+        const wasOpen = section.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.guide-section').forEach(s => s.classList.remove('open'));
+        // Toggle this one
+        if (!wasOpen) section.classList.add('open');
+      });
+    });
+
+    console.log('🌀 NeuroPsicoLocos · Nudo Borromeo Interactivo 2.2 cargado');
   </script>
 </body>
 </html>
