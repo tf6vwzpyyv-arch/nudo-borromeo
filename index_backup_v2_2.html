@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Nudo Borromeo Interactivo 2.3 - NeuroPsicoLocos</title>
+  <title>Nudo Borromeo Interactivo 2.2 - NeuroPsicoLocos</title>
   <style>
     :root {
       --bg: #050510;
@@ -166,10 +166,6 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       margin-top: 12px;
-    }
-
-    #desireBtn {
-      grid-column: 1 / -1;
     }
 
     .controls button, #fullReset {
@@ -424,61 +420,8 @@
     .guide-section-body strong { color: white; }
     .guide-section-body em { color: #c8d0ff; font-style: normal; font-weight: 600; }
 
-
-    /* ── Sistema deseo / objeto a ── */
-    #desireBtn {
-      background: linear-gradient(135deg, rgba(255,20,147,0.92), rgba(139,124,255,0.92));
-      border: none;
-    }
-
-    #desireBtn.active {
-      box-shadow: 0 0 22px rgba(255,20,147,0.42);
-      background: linear-gradient(135deg, #ff1493, #8b7cff);
-    }
-
-    #desirePanel {
-      margin-top: 12px;
-      padding: 11px;
-      border-radius: 14px;
-      background:
-        radial-gradient(circle at 50% 45%, rgba(255,20,147,0.18), transparent 46%),
-        rgba(255,20,147,0.075);
-      border: 1px solid rgba(255,20,147,0.26);
-      box-shadow: inset 0 0 28px rgba(255,20,147,0.06);
-    }
-
-    #desirePanel canvas {
-      width: 100%;
-      height: 138px;
-      display: block;
-      border-radius: 10px;
-      background: rgba(2,3,12,0.44);
-      border: 1px solid rgba(255,255,255,0.07);
-    }
-
-    #desirePanel small {
-      color: var(--muted);
-      display: block;
-      margin-top: 8px;
-      font-size: 11.5px;
-      line-height: 1.35;
-    }
-
-    .object-a-label {
-      color: #ffd9ef;
-      font-size: 15px;
-      font-weight: 900;
-      text-shadow: 0 2px 9px black;
-      background: rgba(40,0,28,0.56);
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,20,147,0.42);
-      white-space: nowrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
     @media (max-width: 720px) {
-      #guideToggle { top: auto; bottom: 154px; right: 10px; }
+      #guideToggle { top: auto; bottom: 72px; right: 10px; }
       #guidePanel { top: 10px; right: 10px; left: 10px; width: auto; max-height: calc(100vh - 20px); }
     }
 
@@ -488,8 +431,6 @@
         top: 10px;
         left: 10px;
         width: calc(100vw - 20px);
-        max-height: calc(100vh - 230px);
-        overflow-y: auto;
       }
 
       #panel h1 {
@@ -499,7 +440,7 @@
       #status {
         left: 10px;
         right: 10px;
-        bottom: 86px;
+        bottom: 72px;
         border-radius: 16px;
         font-size: 11px;
       }
@@ -528,7 +469,7 @@
     <section id="panel">
       <div id="panelHeader">
         <div>
-          <h1>🌀 Nudo Borromeo 2.3</h1>
+          <h1>🌀 Nudo Borromeo 2.2</h1>
           <small>Topología, Lacan y juego interactivo · NeuroPsicoLocos</small>
         </div>
         <button id="collapse" title="Minimizar panel">−</button>
@@ -551,14 +492,7 @@
         <div class="controls">
           <button id="studentBtn">▶ Modo estudiante</button>
           <button id="sinthomeBtn">🟡 Añadir Sinthome</button>
-          <button id="desireBtn">🎯 Activar deseo</button>
         </div>
-
-        <div id="desirePanel">
-          <canvas id="desireChart" width="320" height="150" aria-label="Gráfico dinámico del deseo"></canvas>
-          <small>📊 Dinámica del deseo: búsqueda, falta y retorno. El objeto <em>a</em> causa el movimiento, no lo cierra.</small>
-        </div>
-
         <button id="fullReset">⟳ Reiniciar estructura</button>
       </div>
     </section>
@@ -663,19 +597,7 @@
 
         <div class="guide-section">
           <button class="guide-section-header">
-            <span>8 · El deseo: cazar lo imposible</span>
-            <span class="guide-chevron">▼</span>
-          </button>
-          <div class="guide-section-body">
-            <p>En esta versión puedes activar el <strong>Modo deseo</strong>. Aparece un punto rosa: el objeto <em>a</em>. La consigna parece simple: capturarlo.</p>
-            <p>Pero cada acercamiento produce desplazamiento. El objeto <em>a</em> no funciona como premio final, sino como <strong>causa</strong>: organiza la órbita, mantiene la búsqueda y revela la falta alrededor de la cual se mueve el sujeto.</p>
-            <p>→ Pulsa <em>🎯 Activar deseo</em> y haz clic cerca del objeto <em>a</em>. Verás una traza de partículas: no es captura, es resto de movimiento.</p>
-          </div>
-        </div>
-
-        <div class="guide-section">
-          <button class="guide-section-header">
-            <span>9 · Puentes con la neurociencia</span>
+            <span>8 · Puentes con la neurociencia</span>
             <span class="guide-chevron">▼</span>
           </button>
           <div class="guide-section-body">
@@ -713,7 +635,7 @@
     <div id="status">✅ Nudo intacto: Real, Simbólico e Imaginario se sostienen</div>
 
     <div id="help">
-      ✂️ Clic sobre una anilla para cortarla · 🎯 Activa deseo y prueba capturar el objeto a · 🖱 Arrastra para rotar · 🔍 Rueda para acercar
+      ✂️ Clic sobre una anilla para cortarla · 🖱 Arrastra para rotar · 🔍 Rueda para acercar · 🟡 Activa Sinthome para comparar
     </div>
   </div>
 
@@ -740,7 +662,7 @@
 
     const TEXTS = {
       real: `<strong><span class="real">🔴 Real</span></strong><br>
-        No es la realidad cotidiana. Para Lacan, el Real es aquello que <em>resiste ser capturado por el lenguaje</em>: trauma, cuerpo, goce, imposibilidad.
+        No es la realidad cotidiana. Para Lacan, el Real es aquello que <em>resiste ser capturado por el lenguaje</em>: trauma, cuerpo, goce, imposibilidad, resto no simbolizable.
         Siempre aparece como un límite — un resto no simbolizable. Por eso se representa mediante un <strong>agujero</strong>.`,
       simbolico: `<strong><span class="simbolico">🔵 Simbólico</span></strong><br>
         El orden del lenguaje, la ley, los significantes y las estructuras que organizan la experiencia.
@@ -756,11 +678,7 @@
         Grafía antigua de "síntoma", pero con un significado distinto: no es un trastorno,
         sino una <strong>solución singular</strong>. Lo que cada persona inventa para
         mantener unida su estructura. Para James Joyce fue la escritura.
-        El Sinthome no elimina el conflicto: <em>permite vivir con él</em>.`,
-      desire: `<strong style="color:#ff8bd1">🎯 Deseo y objeto <em>a</em></strong><br>
-        El objeto <em>a</em> no es el objeto que se alcanza. Es la <strong>causa del deseo</strong>.
-        Por eso aparece como un centro brillante y móvil: orienta la búsqueda, pero no se deja capturar.
-        En el Modo deseo, cada intento de atraparlo produce una nueva distancia.`
+        El Sinthome no elimina el conflicto: <em>permite vivir con él</em>.`
     };
 
     const scene = new THREE.Scene();
@@ -940,76 +858,9 @@
     labels.sinthome.visible = false;
     scene.add(labels.sinthome);
 
-    // ── Objeto a + órbita del deseo ──────────────────────────────
-    const desireGroup = new THREE.Group();
-    scene.add(desireGroup);
-
-    const objectAGeo = new THREE.SphereGeometry(0.09, 32, 32);
-    const objectAMat = new THREE.MeshStandardMaterial({
-      color: 0xff1493,
-      emissive: 0xff1493,
-      emissiveIntensity: 1.15,
-      roughness: 0.18,
-      metalness: 0.45,
-      transparent: true,
-      opacity: 0.86
-    });
-    const objectA = new THREE.Mesh(objectAGeo, objectAMat);
-    objectA.userData = { topic: 'desire', isObjectA: true };
-    desireGroup.add(objectA);
-
-    const objectAHalo = new THREE.Mesh(
-      new THREE.SphereGeometry(0.22, 32, 32),
-      new THREE.MeshBasicMaterial({
-        color: 0xff1493,
-        transparent: true,
-        opacity: 0.13,
-        side: THREE.BackSide
-      })
-    );
-    objectA.add(objectAHalo);
-
-    const orbitPoints = [];
-    for (let i = 0; i <= 140; i++) {
-      const t = (i / 140) * Math.PI * 2;
-      orbitPoints.push(new THREE.Vector3(
-        Math.cos(t) * 0.47,
-        Math.sin(t * 0.55) * 0.24,
-        Math.sin(t) * 0.47
-      ));
-    }
-    const orbitCurve = new THREE.CatmullRomCurve3(orbitPoints);
-    orbitCurve.closed = true;
-    const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitCurve.getPoints(220));
-    const orbitMat = new THREE.LineBasicMaterial({
-      color: 0xff1493,
-      transparent: true,
-      opacity: 0.46
-    });
-    const orbitLine = new THREE.Line(orbitGeo, orbitMat);
-    desireGroup.add(orbitLine);
-
-    const objectALabelDiv = document.createElement('div');
-    objectALabelDiv.className = 'object-a-label';
-    objectALabelDiv.innerHTML = 'objeto <em>a</em>';
-    const objectALabel = new CSS2DObject(objectALabelDiv);
-    objectALabel.position.set(0.15, 0.18, 0.02);
-    objectA.add(objectALabel);
-
-    let desireMode = false;
-    let desireTime = 0;
-    let desireParticles = [];
-    let desireEnergy = 0.35;
-    const desireHome = new THREE.Vector3(0, 0, 0);
-    const desireTarget = new THREE.Vector3(0, 0, 0);
-    desireGroup.visible = true;
-
     const statusDiv = document.getElementById('status');
     const explanationDiv = document.getElementById('explanation');
     const sinthomeBtn = document.getElementById('sinthomeBtn');
-    const desireBtn = document.getElementById('desireBtn');
-    const desireCanvas = document.getElementById('desireChart');
-    const desireCtx = desireCanvas.getContext('2d');
 
     let sinthomeMode = false;
     let brokenTopic = null;
@@ -1062,8 +913,6 @@
       labels.sinthome.visible = sinthomeMode;
 
       resetTransforms();
-      objectA.position.set(0,0,0);
-      desireTarget.set(0,0,0);
       updateStatus();
     }
 
@@ -1162,96 +1011,6 @@
       updateStatus();
     }
 
-    function burstDesireParticles(amount = 18) {
-      for (let i = 0; i < amount; i++) {
-        const particle = new THREE.Mesh(
-          new THREE.SphereGeometry(0.014 + Math.random() * 0.012, 8, 8),
-          new THREE.MeshBasicMaterial({
-            color: 0xff1493,
-            transparent: true,
-            opacity: 0.62
-          })
-        );
-        particle.position.copy(objectA.position);
-        particle.velocity = new THREE.Vector3(
-          (Math.random() - 0.5) * 0.035,
-          (Math.random() - 0.5) * 0.035,
-          (Math.random() - 0.5) * 0.035
-        );
-        particle.life = 1;
-        desireGroup.add(particle);
-        desireParticles.push(particle);
-      }
-    }
-
-    function toggleDesireMode() {
-      desireMode = !desireMode;
-      desireBtn.classList.toggle('active', desireMode);
-      desireBtn.textContent = desireMode ? '🎯 Deseo activado' : '🎯 Activar deseo';
-      controls.autoRotate = !desireMode && !studentMode;
-
-      if (desireMode) {
-        setExplanation('desire');
-        statusDiv.innerHTML = '🎯 Modo deseo: intenta capturar el objeto a; se desplazará como causa, no como premio';
-        statusDiv.style.color = '#ff8bd1';
-        burstDesireParticles(24);
-      } else {
-        updateStatus();
-      }
-    }
-
-    function drawDesireChart() {
-      if (!desireCtx) return;
-      const w = desireCanvas.width;
-      const h = desireCanvas.height;
-
-      desireCtx.clearRect(0, 0, w, h);
-      desireCtx.fillStyle = 'rgba(8, 10, 24, 0.70)';
-      desireCtx.fillRect(0, 0, w, h);
-
-      desireCtx.strokeStyle = 'rgba(255,255,255,0.08)';
-      desireCtx.lineWidth = 1;
-      for (let i = 1; i < 4; i++) {
-        const y = (h / 4) * i;
-        desireCtx.beginPath();
-        desireCtx.moveTo(0, y);
-        desireCtx.lineTo(w, y);
-        desireCtx.stroke();
-      }
-
-      desireCtx.strokeStyle = desireMode ? '#ff1493' : 'rgba(255,20,147,0.55)';
-      desireCtx.lineWidth = 2.2;
-      desireCtx.beginPath();
-      for (let x = 0; x < w; x++) {
-        const t = (x + desireTime) / 34;
-        const amp = 18 + desireEnergy * 46;
-        const y = h / 2 + Math.sin(t) * amp + Math.cos(t * 2.25) * (amp * 0.42);
-        if (x === 0) desireCtx.moveTo(x, y);
-        else desireCtx.lineTo(x, y);
-      }
-      desireCtx.stroke();
-
-      // Centro vacío: la falta que organiza la curva
-      desireCtx.beginPath();
-      desireCtx.arc(w / 2, h / 2, 13, 0, Math.PI * 2);
-      desireCtx.strokeStyle = '#ff1493';
-      desireCtx.lineWidth = 2;
-      desireCtx.stroke();
-      desireCtx.beginPath();
-      desireCtx.arc(w / 2, h / 2, 5, 0, Math.PI * 2);
-      desireCtx.fillStyle = 'rgba(255,20,147,0.28)';
-      desireCtx.fill();
-
-      desireCtx.fillStyle = 'rgba(242,245,255,0.72)';
-      desireCtx.font = '11px system-ui, sans-serif';
-      desireCtx.fillText('búsqueda', 10, 18);
-      desireCtx.fillText('falta', w / 2 - 12, h / 2 + 31);
-      desireCtx.fillText('retorno', w - 52, h - 12);
-
-      desireTime += desireMode ? 2.2 : 0.65;
-      desireEnergy += ((desireMode ? 0.9 : 0.35) - desireEnergy) * 0.035;
-    }
-
     function onClickCanvas(event) {
       const target = event.target;
       if (target.closest && target.closest('#ui')) return;
@@ -1261,25 +1020,6 @@
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
-
-      if (desireMode) {
-        const desireHits = raycaster.intersectObject(objectA, true);
-        const nearMouse = new THREE.Vector3(mouse.x * 0.18, mouse.y * 0.14, 0);
-        if (desireHits.length > 0) {
-          // Lo imposible de capturar: el objeto a se desplaza en lugar de entregarse.
-          desireTarget.set(
-            (Math.random() - 0.5) * 0.72 - nearMouse.x,
-            (Math.random() - 0.5) * 0.42 - nearMouse.y,
-            (Math.random() - 0.5) * 0.72
-          );
-          desireEnergy = 1;
-          burstDesireParticles(32);
-          statusDiv.innerHTML = '✨ Casi… pero no: el objeto a se desplaza y deja una traza de deseo';
-          statusDiv.style.color = '#ff8bd1';
-          return;
-        }
-      }
-
       const candidates = rings.filter(r => r.visible && r.userData.active);
       const intersects = raycaster.intersectObjects(candidates);
 
@@ -1321,8 +1061,6 @@
 
       restoreAll();
     });
-
-    desireBtn.addEventListener('click', toggleDesireMode);
 
     const tourCard = document.getElementById('tourCard');
     const tourTitle = document.getElementById('tourTitle');
@@ -1449,43 +1187,6 @@
         ringSinthome.material.emissiveIntensity = 0.55 + Math.sin(Date.now() * 0.006) * 0.18;
       }
 
-      // Animación del deseo: órbita, evasión y restos de partículas
-      desireGroup.rotation.y += desireMode ? 0.006 : 0.002;
-      orbitLine.rotation.x += desireMode ? 0.004 : 0.0015;
-      objectA.material.emissiveIntensity = 0.95 + Math.sin(Date.now() * 0.007) * 0.35;
-      objectAHalo.material.opacity = 0.10 + Math.sin(Date.now() * 0.006) * 0.045;
-
-      if (desireMode) {
-        const t = Date.now() * 0.001;
-        const breathing = new THREE.Vector3(
-          Math.sin(t * 1.7) * 0.018,
-          Math.cos(t * 1.3) * 0.012,
-          Math.sin(t * 1.1) * 0.018
-        );
-        objectA.position.lerp(desireTarget.clone().add(breathing), 0.055);
-        desireTarget.lerp(desireHome, 0.006);
-        if (Math.random() < 0.16) burstDesireParticles(1);
-      } else {
-        objectA.position.lerp(desireHome, 0.035);
-      }
-
-      desireParticles = desireParticles.filter(p => {
-        p.position.add(p.velocity);
-        p.velocity.multiplyScalar(0.985);
-        p.life -= 0.018;
-        p.material.opacity = Math.max(0, p.life * 0.62);
-        p.scale.multiplyScalar(0.992);
-        if (p.life <= 0) {
-          desireGroup.remove(p);
-          p.geometry.dispose();
-          p.material.dispose();
-          return false;
-        }
-        return true;
-      });
-
-      drawDesireChart();
-
       controls.update();
       renderer.render(scene, camera);
       labelRenderer.render(scene, camera);
@@ -1527,11 +1228,7 @@
       });
     });
 
-    // Refuerza el título público cuando el módulo termina de cargar.
-    document.querySelector('#panel h1').textContent = '🌀 Nudo Borromeo 2.3';
-    document.title = 'Nudo Borromeo Interactivo 2.3 - NeuroPsicoLocos';
-
-    console.log('🌀 NeuroPsicoLocos · Nudo Borromeo Interactivo 2.3 cargado');
+    console.log('🌀 NeuroPsicoLocos · Nudo Borromeo Interactivo 2.2 cargado');
   </script>
 </body>
 </html>
