@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Nudo Borromeo Interactivo 2.3 - NeuroPsicoLocos</title>
+  <title>Nudo Borromeo Interactivo 2.4 - NeuroPsicoLocos</title>
   <style>
     :root {
       --bg: #050510;
@@ -477,6 +477,15 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
+    .concept-note {
+      margin-top: 10px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      border-left: 3px solid #8b7cff;
+      color: #d8ddff;
+    }
+
     @media (max-width: 720px) {
       #guideToggle { top: auto; bottom: 154px; right: 10px; }
       #guidePanel { top: 10px; right: 10px; left: 10px; width: auto; max-height: calc(100vh - 20px); }
@@ -528,7 +537,7 @@
     <section id="panel">
       <div id="panelHeader">
         <div>
-          <h1>🌀 Nudo Borromeo 2.3</h1>
+          <h1>🌀 Nudo Borromeo 2.4</h1>
           <small>Topología, Lacan y juego interactivo · NeuroPsicoLocos</small>
         </div>
         <button id="collapse" title="Minimizar panel">−</button>
@@ -669,7 +678,7 @@
           <div class="guide-section-body">
             <p>En esta versión puedes activar el <strong>Modo deseo</strong>. Aparece un punto rosa: el objeto <em>a</em>. La consigna parece simple: capturarlo.</p>
             <p>Pero cada acercamiento produce desplazamiento. El objeto <em>a</em> no funciona como premio final, sino como <strong>causa</strong>: organiza la órbita, mantiene la búsqueda y revela la falta alrededor de la cual se mueve el sujeto.</p>
-            <p>→ Pulsa <em>🎯 Activar deseo</em> y haz clic cerca del objeto <em>a</em>. Verás una traza de partículas: no es captura, es resto de movimiento.</p>
+            <p>→ Pulsa <em>🎯 Activar deseo</em> y haz clic cerca del objeto <em>a</em>. Verás una estela y una traza de partículas: no es captura, es resto de movimiento.</p>
           </div>
         </div>
 
@@ -679,11 +688,11 @@
             <span class="guide-chevron">▼</span>
           </button>
           <div class="guide-section-body">
-            <p>Lacan no hacía neurociencia, y la neurociencia no confirma literalmente el psicoanálisis. Sin embargo existen <strong>puentes conceptuales</strong> interesantes:</p>
-            <p>• Las redes cerebrales pueden estudiarse con herramientas <em>topológicas</em>.</p>
-            <p>• La <em>homología persistente</em> permite identificar cavidades o «agujeros» matemáticos en redes complejas.</p>
-            <p>• La <em>dopamina</em> responde con más fuerza a la anticipación y la expectativa que a la recompensa obtenida — lo cual resuena con la idea del deseo como órbita, no como llegada.</p>
-            <p>Estas observaciones no prueban las teorías de Lacan, pero muestran que estructura, conectividad y dinámica poseen un lenguaje matemático común.</p>
+            <p>Lacan no hacía neurociencia, y la neurociencia no confirma literalmente el psicoanálisis. Esta sección funciona como <strong>puente conceptual</strong>, no como equivalencia anatómica ni prueba causal.</p>
+            <p><em>Conectividad.</em> Las redes cerebrales pueden estudiarse como grafos: nodos, conexiones, comunidades y trayectorias dinámicas. Esto dialoga con la idea de estructura sin reducir el sujeto a un circuito aislado.</p>
+            <p><em>Topología.</em> Herramientas como la homología persistente permiten describir cavidades, ciclos y formas globales en datos complejos. Aquí la palabra «agujero» es matemática; no debe confundirse con una lesión ni con una localización cerebral literal.</p>
+            <p><em>Deseo y anticipación.</em> En neurociencia afectiva, los sistemas dopaminérgicos se asocian con anticipación, saliencia, aprendizaje por predicción y búsqueda. Eso resuena con el deseo como movimiento, aunque no equivale al objeto <em>a</em>.</p>
+            <div class="concept-note">Precaución docente: esta visualización es una simplificación topológica. Sirve para pensar relaciones entre estructura, falta y movimiento; no representa anatomía cerebral real.</div>
           </div>
         </div>
 
@@ -713,7 +722,7 @@
     <div id="status">✅ Nudo intacto: Real, Simbólico e Imaginario se sostienen</div>
 
     <div id="help">
-      ✂️ Clic sobre una anilla para cortarla · 🎯 Activa deseo y prueba capturar el objeto a · 🖱 Arrastra para rotar · 🔍 Rueda para acercar
+      ✂️ Clic sobre una anilla para cortarla · 🎯 Activa deseo y sigue la estela del objeto a · 🖱 Arrastra para rotar · 🔍 Rueda para acercar
     </div>
   </div>
 
@@ -760,7 +769,7 @@
       desire: `<strong style="color:#ff8bd1">🎯 Deseo y objeto <em>a</em></strong><br>
         El objeto <em>a</em> no es el objeto que se alcanza. Es la <strong>causa del deseo</strong>.
         Por eso aparece como un centro brillante y móvil: orienta la búsqueda, pero no se deja capturar.
-        En el Modo deseo, cada intento de atraparlo produce una nueva distancia.`
+        En el Modo deseo, cada intento de atraparlo produce una nueva distancia y deja una estela de desplazamiento.`
     };
 
     const scene = new THREE.Scene();
@@ -989,6 +998,20 @@
     const orbitLine = new THREE.Line(orbitGeo, orbitMat);
     desireGroup.add(orbitLine);
 
+    const desireTrailLength = 80;
+    const desireTrailPositions = new Float32Array(desireTrailLength * 3);
+    const desireTrailGeo = new THREE.BufferGeometry();
+    desireTrailGeo.setAttribute('position', new THREE.BufferAttribute(desireTrailPositions, 3));
+    const desireTrailMat = new THREE.LineBasicMaterial({
+      color: 0xff8bd1,
+      transparent: true,
+      opacity: 0.58
+    });
+    const desireTrailLine = new THREE.Line(desireTrailGeo, desireTrailMat);
+    desireGroup.add(desireTrailLine);
+
+    const desireTrail = Array.from({ length: desireTrailLength }, () => new THREE.Vector3(0, 0, 0));
+
     const objectALabelDiv = document.createElement('div');
     objectALabelDiv.className = 'object-a-label';
     objectALabelDiv.innerHTML = 'objeto <em>a</em>';
@@ -999,6 +1022,7 @@
     let desireMode = false;
     let desireTime = 0;
     let desireParticles = [];
+    let cutWaves = [];
     let desireEnergy = 0.35;
     const desireHome = new THREE.Vector3(0, 0, 0);
     const desireTarget = new THREE.Vector3(0, 0, 0);
@@ -1064,6 +1088,14 @@
       resetTransforms();
       objectA.position.set(0,0,0);
       desireTarget.set(0,0,0);
+      desireTrail.forEach(point => point.set(0, 0, 0));
+      cutWaves.forEach(wave => {
+        scene.remove(wave);
+        wave.geometry.dispose();
+        wave.material.dispose();
+      });
+      cutWaves = [];
+      scene.background = new THREE.Color(0x050510);
       updateStatus();
     }
 
@@ -1160,6 +1192,51 @@
       }
 
       updateStatus();
+      spawnCutWave(topic);
+    }
+
+    function updateDesireTrail() {
+      const currentPoint = objectA.localToWorld(new THREE.Vector3(0, 0, 0));
+      desireGroup.worldToLocal(currentPoint);
+      desireTrail.unshift(currentPoint);
+      desireTrail.pop();
+
+      desireTrail.forEach((point, index) => {
+        const offset = index * 3;
+        desireTrailPositions[offset] = point.x;
+        desireTrailPositions[offset + 1] = point.y;
+        desireTrailPositions[offset + 2] = point.z;
+      });
+
+      desireTrailGeo.attributes.position.needsUpdate = true;
+      desireTrailMat.opacity = desireMode ? 0.7 : 0.28;
+    }
+
+    function spawnCutWave(topic) {
+      const color = COLORS[topic] || 0xffffff;
+      const wave = new THREE.Mesh(
+        new THREE.RingGeometry(0.18, 0.205, 64),
+        new THREE.MeshBasicMaterial({
+          color,
+          transparent: true,
+          opacity: 0.58,
+          side: THREE.DoubleSide
+        })
+      );
+      wave.userData.life = 1;
+      wave.userData.topic = topic;
+      wave.rotation.set(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+
+      const ring = rings.find(r => r.userData.topic === topic);
+      if (ring) wave.position.copy(ring.position);
+
+      scene.add(wave);
+      cutWaves.push(wave);
+
+      scene.background = new THREE.Color(color).lerp(new THREE.Color(0x050510), 0.74);
+      setTimeout(() => {
+        scene.background = new THREE.Color(0x050510);
+      }, 260);
     }
 
     function burstDesireParticles(amount = 18) {
@@ -1449,6 +1526,21 @@
         ringSinthome.material.emissiveIntensity = 0.55 + Math.sin(Date.now() * 0.006) * 0.18;
       }
 
+      cutWaves = cutWaves.filter(wave => {
+        wave.userData.life -= 0.025;
+        wave.scale.multiplyScalar(1.045);
+        wave.material.opacity = Math.max(0, wave.userData.life * 0.58);
+        wave.lookAt(camera.position);
+
+        if (wave.userData.life <= 0) {
+          scene.remove(wave);
+          wave.geometry.dispose();
+          wave.material.dispose();
+          return false;
+        }
+        return true;
+      });
+
       // Animación del deseo: órbita, evasión y restos de partículas
       desireGroup.rotation.y += desireMode ? 0.006 : 0.002;
       orbitLine.rotation.x += desireMode ? 0.004 : 0.0015;
@@ -1468,6 +1560,8 @@
       } else {
         objectA.position.lerp(desireHome, 0.035);
       }
+
+      updateDesireTrail();
 
       desireParticles = desireParticles.filter(p => {
         p.position.add(p.velocity);
@@ -1528,10 +1622,10 @@
     });
 
     // Refuerza el título público cuando el módulo termina de cargar.
-    document.querySelector('#panel h1').textContent = '🌀 Nudo Borromeo 2.3';
-    document.title = 'Nudo Borromeo Interactivo 2.3 - NeuroPsicoLocos';
+    document.querySelector('#panel h1').textContent = '🌀 Nudo Borromeo 2.4';
+    document.title = 'Nudo Borromeo Interactivo 2.4 - NeuroPsicoLocos';
 
-    console.log('🌀 NeuroPsicoLocos · Nudo Borromeo Interactivo 2.3 cargado');
+    console.log('🌀 NeuroPsicoLocos · Nudo Borromeo Interactivo 2.4 cargado');
   </script>
 </body>
 </html>
