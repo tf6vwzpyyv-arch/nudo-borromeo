@@ -172,7 +172,8 @@
       margin-top: 12px;
     }
 
-    #desireBtn {
+    #desireBtn,
+    #fullReset {
       grid-column: 1 / -1;
     }
 
@@ -205,7 +206,7 @@
 
     #fullReset {
       width: 100%;
-      margin-top: 8px;
+      margin-top: 0;
       background: rgba(255,51,102,0.22);
       border-color: rgba(255,51,102,0.5);
     }
@@ -587,14 +588,13 @@
           <button id="studentBtn">▶ Modo estudiante</button>
           <button id="sinthomeBtn">🟡 Añadir Sinthome</button>
           <button id="desireBtn">🎯 Activar deseo</button>
+          <button id="fullReset">⟳ Reiniciar estructura</button>
         </div>
 
         <div id="desirePanel">
           <canvas id="desireChart" width="320" height="150" aria-label="Gráfico dinámico del deseo"></canvas>
           <small>📊 Dinámica del deseo: búsqueda, falta y retorno. El objeto <em>a</em> causa el movimiento, no lo cierra.</small>
         </div>
-
-        <button id="fullReset">⟳ Reiniciar estructura</button>
       </div>
     </section>
 
